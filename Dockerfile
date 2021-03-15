@@ -1,6 +1,7 @@
 FROM ubuntu:20.04
 
 ENV BUILD_PREFIX /usr/local/src
+ENV COTURN_VERSION 4.5.2-2
 
 # Install build dependencies for Coturn & checkinstall
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -10,10 +11,11 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 # Copy Coturn
 WORKDIR ${BUILD_PREFIX}
-COPY coturn-4.5.2 /${BUILD_PREFIX}/coturn
+COPY coturn-debian-${COTURN_VERSION} /${BUILD_PREFIX}/coturn
 
 # Build Coturn
 WORKDIR ${BUILD_PREFIX}/coturn
 RUN ./configure
 RUN make
-
+RUN checkinstall -y --pkgversion ${COTURN_VERSION} -D
+RUN ls -la
