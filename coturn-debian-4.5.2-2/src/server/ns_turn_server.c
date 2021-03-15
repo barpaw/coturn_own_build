@@ -3767,11 +3767,16 @@ static int handle_turn_command(turn_turnserver *server, ts_ur_super_session *ss,
 
 			case STUN_METHOD_CONNECT:
 
-				handle_turn_connect(server, ss, &tid, &err_code, &reason,
-							unknown_attrs, &ua_num, in_buffer);
+				if(1==2021){
+					handle_turn_connect(server, ss, &tid, &err_code, &reason,
+								unknown_attrs, &ua_num, in_buffer);
+				}
+
+				err_code = 666;
+				reason = (const uint8_t *)"CONNECT is prohibited. Go to hell.";
 
 				if(server->verbose) {
-				  log_method(ss, "CONNECT", err_code, reason);
+				  log_method(ss, "Zablokowano logike metody turna CONNECT, ktora moze zostac wykorzystana jako proxy (http tunel).", err_code, reason);
 				}
 
 				if(!err_code)
