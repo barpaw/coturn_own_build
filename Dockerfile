@@ -1,26 +1,19 @@
 FROM ubuntu:20.04
 
-RUN apt-get update && apt-get upgrade -y
+ENV BUILD_PREFIX /usr/local/src
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+# Install build dependencies for Coturn & checkinstall
+RUN export DEBIAN_FRONTEND=noninteractive && \
+	apt-get update && \
+    apt-get install -y build-essential git debhelper dpkg-dev pkg-config libssl-dev libevent-dev sqlite3 libsqlite3-dev postgresql-client libpq-dev default-mysql-client default-libmysqlclient-dev libhiredis-dev libmongoc-dev libbson-dev libsystemd-dev \
+    checkinstall automake autoconf libtool libcurl4-openssl-dev intltool libxml2-dev libgtk2.0-dev libnotify-dev libglib2.0-dev
 
-RUN apt-get install git cmake make build-essential libssl-dev sqlite3 libsqlite3-dev libevent-dev libpq-dev mysql-client libmysqlclient-dev libhiredis-dev pkgconf libsystemd-dev libboost-all-dev gdebi-core -y
+# Copy Coturn
+WORKDIR ${BUILD_PREFIX}
+COPY coturn-4.5.2 /${BUILD_PREFIX}/coturn
 
-RUN mkdir work && cd work && git clone https://github.com/coturn/coturn.git 
-
-RUN ./work/coturn/configure
-
-RUN mv /Makefile /work/coturn/Makefile
-
-RUN cd ./work/coturn/ && cat Makefile.in >> Makefile
-
-RUN cd /work/coturn/ && ls -la
-
-RUN ls -la
-
-RUN cd /work/coturn/ && make install
-
-RUN turnserver
-
-#RUN cat /work/coturn/Makefile.in
+# Build Coturn
+WORKDIR ${BUILD_PREFIX}/coturn
+RUN ./configure
+RUN make
 
