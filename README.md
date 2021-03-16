@@ -1,5 +1,9 @@
 ## Recipe for own coturn *.deb package build
 
+### What was modified?
+
+I decided to block turn CONNECT method from executing because it allowed to create an http proxy tunnel.
+
 ### How to run this?
 
 ```
